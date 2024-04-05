@@ -1,0 +1,8 @@
+int,String,String,String,Integer,Double,Double,Integer,Integer
+IDnum,cityName,Country,Continent,Population,Latitutude,Longitude,YearFounded,Elevation
+1,Los Angeles,USA,North America,3849123,34.052235,-118.243683,1781,305
+2,La Paz,Bolivia,South America,816123,-16.497789,-68.125839,1548,11942
+3,Kuala Lumpur,Malaysia,Asia,1808123,3.139003,101.686852,1857,207
+4,Andorra la Vella,Andorra,Europe,22256,42.50753,1.52182,1278,3356
+5,Lagos,Nigeria,Africa,15388123,6.524379,3.379206,1906,135
+6,Perth,Australia,Oceania,1985123,-31.953512,115.857048,1829,0
