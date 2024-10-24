@@ -16,6 +16,8 @@ package com.example.csv_to_hashmap;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+//import android.media.MediaPlayer;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -48,9 +50,18 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Great for stubs to creat a data source from a not yet connected subsystem
+    //APPLICATION SPECIFIC INSTANCE VARIABLE DECLARATIONS
+
+    //Declaring objects to store audio files
+    MediaPlayer honkOne;
+    MediaPlayer honkTwo;
+
+    //Declaration and inititalization of String Array with two elements
+    //Great for stubs to create a data source from a not yet connected subsystem
     static String[] strArr3 = {"hello", "there"};
 
+    //Declaration of ArrayList of type Integer with initialCapacity of 5 elements
+    //that are not initialized, but with memory reserved.
     //Also great for stubs to creat a data source from a not yet connected subsystem
     static ArrayList<Integer> intArrList = new ArrayList<Integer>(5);
 
@@ -60,45 +71,76 @@ public class MainActivity extends AppCompatActivity {
     String tuple2 = "line2-word1 line2-word2 line2-word3";
 
     //use for stub or testing to simulate a BufferedReader
+    //Declaring and inititializing a String Array
     String[] tupArr = {tuple1, tuple2};
-    //Create file name
+
+    //Storing a file name in string variable
     String MY_FILE_NAME = "io_file.txt";
 
     //Use for displaying rows within Table
+    //Declaring two table row objects
     TableRow row1;
     TableRow row2;
 
+    //TableRow[] array that holds the rows
     TableRow[] tableRows;
 
+    //Declaring a TextView object
     TextView text1;
 
     //Use for capturing text from user to save to a file
+    //Declaring a, EditView object
     EditText editText;
 
+    //Declare HashMap for use to store Key-Value pairs of key to a ArrayList of data
+    //HashMap cities_hm has Strings for keys and a separate ArrayList for each value.
     HashMap<String,ArrayList> cities_hm = new HashMap<String, ArrayList>();
 
     @Override
+    //Notice we do not use: "throws IOException" for this method
+    //that contains other method calls that do use "throws IOException"
     protected void onCreate(Bundle savedInstanceState) {
+        //REQUAIRED ANDROID LIFECYCLE INITIALIZATION
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //APPLICATION-SPECIFIC INSTANCE VARIABLE ASSIGNMENT
+
+        //The two sounds are assiged values from the res folder inside of raw
+        honkOne = MediaPlayer.create(this, R.raw.honk_one);
+        honkTwo = MediaPlayer.create(this, R.raw.honk_two);
+
+        //The two row objects are assigned values by ID
         row1 = findViewById(R.id.row1);
         row2 = findViewById(R.id.row2);
 
-        tableRows = new TableRow[2];
-        tableRows[0] = row1;
-        tableRows[1] = row2;
+
 
         //Practice displaying rows using these below
         //The data transfer to rows must occur in method
         //Code here only assigns .XML objects to TableRow objects
-        //TableRow row3 = findViewById(R.id.row3);
-        //TableRow row4 = findViewById(R.id.row4);
-        //TableRow row5 = findViewById(R.id.row5);
-        //TableRow row6 = findViewById(R.id.row6);
+        TableRow row3 = findViewById(R.id.row3);
+        TableRow row4 = findViewById(R.id.row4);
+        TableRow row5 = findViewById(R.id.row5);
+        TableRow row6 = findViewById(R.id.row6);
+
+        //The TableRow Array is now given a size and then each element
+        //is initialized.
+        tableRows = new TableRow[6];
+        //The first two are declared as instance variables with class scope
+        tableRows[0] = row1;
+        tableRows[1] = row2;
+        //These four below are declared local variables with method scope
+        //Point was to show both are possible, depending on need
+        tableRows[2] = row3;
+        tableRows[3] = row4;
+        tableRows[4] = row5;
+        tableRows[5] = row6;
 
         //Assigning the EditText UML object to a EditText Java object
         editText = findViewById(R.id.editText);
+
+        //BUTTON LISTENER SETUP
 
         Button button1 = findViewById(R.id.button1);
         //Button 1 click listener with anonynmous class
@@ -106,6 +148,9 @@ public class MainActivity extends AppCompatActivity {
                                    {   @Override
                                    public void onClick(View view)
                                    {
+                                       //Plays sound in honkOne
+                                       honkOne.start();
+
                                        //Need try/catch around method that has a throws
                                        try {
                                            readCityData();
@@ -129,17 +174,23 @@ public class MainActivity extends AppCompatActivity {
                                        } catch (IOException e) {
                                            throw new RuntimeException(e);
                                        }
+                                        //Plays sound in honkTwo
+                                       honkTwo.start();
                                    }
                                    }
         );
 
+
         Button button3 = findViewById(R.id.button3);
-        //Button 2 click listener with anonynmous class
+        //Button 3 click listener with anonynmous class
         button3.setOnClickListener(new View.OnClickListener()
                                    {  @Override
                                    public void onClick(View view)
                                    {
+                                       //Loads XML object by ID into Java object
                                        TextView textView = findViewById(R.id.textView1);
+                                       //Gets string value in the editText object and
+                                       //sets textView text to same value as editText
                                        textView.setText(editText.getText());
 
                                        //Need try/catch around method that has a throws
@@ -156,10 +207,13 @@ public class MainActivity extends AppCompatActivity {
     //Needs to use throws IOException because of try for in InputStream object
     private void readCityData() throws IOException {
         //Needs try/catch because always possible file is missing
+        //Get CSV file in res/raw and store in InputStream object.
+        //Rembmer, all Stream classes are one-time use, one way, either I or O
         try (InputStream stream = getResources().openRawResource(R.raw.cities_data))
         {
             //Log.i("XXX", "Stream works.");
 
+            //Converts stream to UTF_8 and stores into BufferedReader object
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(stream, StandardCharsets.UTF_8)
             );
@@ -167,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
             //Using line counter to skip over header lines in .CSV
             int lineCounter = 0;
             String line;
+            //Runs until readLine() method returns a null, happens at last line.
             while((line = reader.readLine()) != null)
             {   //tempData used to temporarily copy data in and out of
                 //value of the key-value pair where the value is an
@@ -174,28 +229,39 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList tempData;
                 //Start from line 2 because first two lines are column label headers
                 if (lineCounter >= 2) {
-                    //Split line by delimiter
+                    //Track each line in Logcat
                     Log.i("XXX", line);
+                    //Split line by delimiter ',' into array of String
                     String[] words = line.split(",");
                     //Load all data to class object
                     //Create key and value with a blank ArrayList
+                    //Skipped index 0 to avoid header of data types
+                    //put() is the instance method to insert a new mapping
+                    //into the HashMap. We are inserting a key-value pairing
+                    //Here, 2nd element words[] is key, an empty arrayList is value
                     cities_hm.put(words[1],new ArrayList());
                     //Temporarily copy tempData for data transfers
                     tempData = cities_hm.get(words[1]);
+                    //Used index 0 for the headers
                     tempData.add(words[0]);
+                    //Skipped index 1 to avoid header of data labels
+                    //These are string type and need no parsing
                     tempData.add(words[2]);
                     tempData.add(words[3]);
+                    //These are number types and must be parsed from strings
                     tempData.add(Integer.parseInt(words[4]));
                     tempData.add(Double.parseDouble(words[5]));
                     tempData.add(Double.parseDouble(words[6]));
                     tempData.add(Integer.parseInt(words[7]));
                     tempData.add(Integer.parseInt(words[8]));
 
-                    //Put to the key in cities for the value in words[0]
-                    cities_hm.put(words[1], tempData);
                     //Check content of each city object in Log
+                    //get().toString takes the array of string and converts
+                    //the who array back to a single string. The + concatenates
+                    //the cityName which at words[1]. words[0] is the indexNum
                     Log.i("XXX", words[1] + cities_hm.get(words[1]).toString());
                 }
+                //Increment line counter to go to next line
                 lineCounter++;
             }
 
@@ -274,7 +340,8 @@ public class MainActivity extends AppCompatActivity {
         }else
         {
             //Message to communicate data is already displayed
-            Toast.makeText(getApplicationContext(),"City data is displayed.",
+            Toast.makeText(getApplicationContext(),
+                    "City data is alreadt displayed.",
                     Toast.LENGTH_LONG).show();
         }
     }
