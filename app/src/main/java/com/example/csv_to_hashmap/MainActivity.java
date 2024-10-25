@@ -312,10 +312,12 @@ public class MainActivity extends AppCompatActivity {
                     text.append(tempStr + " ");
                     tableRows[loopCounter].addView(text);
                     //Row 1-Col 4 data loading: continent
+                    /*
                     text = new TextView(this);
                     tempStr = (String) cityData.get(2);
                     text.append(tempStr + " ");
                     tableRows[loopCounter].addView(text);
+                    */
                     //Row 1-Col 5 data loading: population
                     text = new TextView(this);
                     tempStr = Integer.toString((Integer) cityData.get(3));
@@ -349,7 +351,6 @@ public class MainActivity extends AppCompatActivity {
     public void readInputFile() throws IOException
     {
         MY_FILE_NAME = "io_file.txt";
-
         //Gets the internal path of the file
         File path = getApplicationContext().getFilesDir();
         //Converts the text file to a File object
